@@ -1,32 +1,48 @@
 const express = require('express')
 require('./db/mongoose')
-const User = require('./models/user')
-const Task = require('./models/task')
+
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 
 const app = express()
 const port = process.env.PORT || 3000
 
+// app.use((req, res, next) => {
+//   if (req.method === 'GET') {
+//     res.send('GET requests are disabled')
+//   } else {
+//     next()
+//   }
+// })
+
+// app.use((req, res, next) => {
+//   res.status(503).send('Site is currently down. Check back soon!')
+// })
+
 app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
+
+//
+// Without Middleware: new request -> run route handler
+//
+// WITH middleware: new request -> do something -> run route handler
 
 app.listen(port, () => {
   console.log('Server is up on port ' + port)
 })
 
-const bcrypt = require('bcryptjs')
+const Task = require('./models/task')
+const User = require('./models/user')
 
-const myFunction = async () => {
-  const password = 'Red12345!'
-  const hashedPassword = await bcrypt.hash(password, 8)
+const main = async () => {
+  // const task = await Task.findById('5df23fa544dd4918d0891c0f')
+  // await task.populate('owner').execPopulate()
+  // console.log(task.owner)
 
-  console.log(password)
-  console.log(hashedPassword)
-
-  const isMatch = await bcrypt.compare('Red12345!', hashedPassword)
-  console.log(isMatch)
+  const user = await User.findById('5df23f9c44dd4918d0891c0d')
+  await user.populate('tasks').execPopulate()
+  console.log(user.tasks)
 }
 
-myFunction()
+main ()
